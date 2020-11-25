@@ -10,8 +10,11 @@ env:
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
-  K8S_SECRET_FOO: "bar"
-  SERVICE_PORT: 5858
+  # Default usernames and passwords for postgres setups
+  # Note: These are the credentials that will be used for testing
+  DATABASE_USER: user
+  DATABASE_PASSWORD: testing-password
+
   K8S_CLUSTER_ISSUER: "certificate-letsencrypt-prod"
   APP_MIGRATE_COMMAND: /app/.prod/on_deploy.sh
 
