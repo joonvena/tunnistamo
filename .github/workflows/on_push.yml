@@ -11,7 +11,6 @@ env:
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
   K8S_SECRET_FOO: "bar"
-  SERVICE_PORT: 5858
   K8S_CLUSTER_ISSUER: "certificate-letsencrypt-prod"
   APP_MIGRATE_COMMAND: /app/.prod/on_deploy.sh
 
@@ -46,6 +45,15 @@ jobs:
           github_head_ref: ${{ github.head_ref }}
           github_repo: ${{ github.event.repository.name }}
           pull_request_id: ${{ github.event.pull_request.id }}
+
+      - name: Review-Services
+        uses: andersinno/kolga-deploy-service-action@v2
+        with:
+          projects: JOONVENA_TUNNISTAMO
+        env:
+          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
+          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
+          ENVIRONMENT_SLUG: ${{ env.ref }}
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
