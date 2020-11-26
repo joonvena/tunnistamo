@@ -1,0 +1,31 @@
+name: Stop Review
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
+
+jobs:
+  stop_review:
+    runs-on: ubuntu-latest
+    name: Stop Review
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "repo_name=${github_repo//['_/']/-}" >> $GITHUB_ENV
+          echo "pr_id=${pull_request_id#4}" >> $GITHUB_ENV
+          echo "ref=${github_head_ref//['_/']/-}" >> $GITHUB_ENV
+        env:
+          github_head_ref: ${{ github.event.pull_request.head.ref }}
+          github_repo: ${{ github.event.repository.name }}
+          pull_request_id: ${{ github.event.pull_request.id }}
+
+      - name: Test
+        run: echo "$repo_name $pr_id $ref"
+
+      - name: Stop Review
+        uses: andersinno/kolga-review-cleanup-action@v2
+        with:
+          namespace: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
+        id: stop_review

@@ -55,15 +55,15 @@ jobs:
         with:
           projects: JOONVENA_TUNNISTAMO
         env:
-          K8S_NAMESPACE: ${{ env.namespace }}
-          ENVIRONMENT_URL: https://${{ env.namespace }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
+          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         env:
           K8S_SECRET_ALLOWED_HOSTS: "*"
-          K8S_NAMESPACE: ${{ env.namespace }}
-          ENVIRONMENT_URL: https://${{ env.namespace }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
+          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}-slug
 
