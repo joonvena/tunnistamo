@@ -44,6 +44,7 @@ jobs:
           echo "repo_name=${github_repo//['_/']/-}" >> $GITHUB_ENV
           echo "pr_id=${pull_request_id#4}" >> $GITHUB_ENV
           echo "ref=${github_head_ref//['_/']/-}" >> $GITHUB_ENV
+          echo "namespace=${repo_name}-${pr_id}-${ref}" >> $GITHUB_ENV
         env:
           github_head_ref: ${{ github.head_ref }}
           github_repo: ${{ github.event.repository.name }}
@@ -54,15 +55,15 @@ jobs:
         with:
           projects: JOONVENA_TUNNISTAMO
         env:
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.namespace }}
+          ENVIRONMENT_URL: https://${{ env.namespace }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         env:
           K8S_SECRET_ALLOWED_HOSTS: "*"
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.namespace }}
+          ENVIRONMENT_URL: https://${{ env.namespace }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}-slug
 
