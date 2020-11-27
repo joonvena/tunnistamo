@@ -1,0 +1,19 @@
+name: Stop Review
+on:
+  pull_request:
+    types: [closed]
+
+env:
+  KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
+
+jobs:
+  stop_review:
+    runs-on: ubuntu-latest
+    name: Stop Review
+    steps:
+      - uses: andersinno/kolga-setup-action@v2
+
+      - name: Stop Review
+        uses: ./stop_review
+        with:
+          namespace: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
