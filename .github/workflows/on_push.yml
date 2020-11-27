@@ -6,7 +6,6 @@ env:
   CONTAINER_REGISTRY_USER: ${{ secrets.GHCR_CONTAINER_REGISTRY_USER }}
   CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GHCR_CONTAINER_REGISTRY_PASSWORD }}
   CONTAINER_REGISTRY_REPO: ghcr.io/joonvena/${{ github.event.repository.name }}
-  KOLGA_IMAGE: docker.anders.fi/anders/ci-configuration:dev-buildkit-upgrade-production
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
@@ -46,15 +45,15 @@ jobs:
         with:
           projects: JOONVENA_TUNNISTAMO
         env:
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.env_slug }}
+          ENVIRONMENT_URL: https://${{ env.env_slug }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         env:
           K8S_SECRET_ALLOWED_HOSTS: "*"
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
+          K8S_NAMESPACE: ${{ env.env_slug }}
+          ENVIRONMENT_URL: https://${{ env.env_slug }}.andersalumni.fi
           ENVIRONMENT_SLUG: ${{ env.ref }}-slug
 
