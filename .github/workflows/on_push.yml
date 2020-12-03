@@ -6,7 +6,6 @@ env:
   CONTAINER_REGISTRY_USER: ${{ secrets.GHCR_CONTAINER_REGISTRY_USER }}
   CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GHCR_CONTAINER_REGISTRY_PASSWORD }}
   CONTAINER_REGISTRY_REPO: ghcr.io/joonvena/${{ github.event.repository.name }}
-  KOLGA_IMAGE: docker.anders.fi/anders/ci-configuration:dev-buildkit-upgrade-production
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
@@ -25,7 +24,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         uses: andersinno/kolga-build-action@v2
-        id: build
         with:
           disable_cache: true
 
@@ -40,29 +38,18 @@ jobs:
     name: Review
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          echo "repo_name=${github_repo//['_/']/-}" >> $GITHUB_ENV
-          echo "pr_id=${pull_request_id#4}" >> $GITHUB_ENV
-          echo "ref=${github_head_ref//['_/']/-}" >> $GITHUB_ENV
-        env:
-          github_head_ref: ${{ github.head_ref }}
-          github_repo: ${{ github.event.repository.name }}
-          pull_request_id: ${{ github.event.pull_request.id }}
+      - uses: andersinno/kolga-setup-action@v2
 
       - name: Review-Services
         uses: andersinno/kolga-deploy-service-action@v2
         with:
           projects: JOONVENA_TUNNISTAMO
         env:
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
-          ENVIRONMENT_SLUG: ${{ env.ref }}
+          ENVIRONMENT_URL: https://${{ env.K8S_NAMESPACE }}.andersalumni.fi
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         env:
           K8S_SECRET_ALLOWED_HOSTS: "*"
-          K8S_NAMESPACE: ${{ env.repo_name}}-${{ env.pr_id }}-${{ env.ref }}
-          ENVIRONMENT_URL: https://${{ env.repo_name }}-${{ env.pr_id }}-${{ env.ref }}.andersalumni.fi
-          ENVIRONMENT_SLUG: ${{ env.ref }}-slug
+          ENVIRONMENT_URL: https://${{ env.K8S_NAMESPACE }}.andersalumni.fi
 
