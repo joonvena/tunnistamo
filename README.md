@@ -4,7 +4,7 @@
 
 # Tunnistamo
 
-## Set up with
+## Set up
 
 1. Create a `docker-compose.env.yaml` file in the project folder:
    * you can use `docker-compose.env.yaml.template` as a base, it does not need any changes if you want all features enables
